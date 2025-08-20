@@ -1,8 +1,5 @@
 import type { Expense } from "@/types/expense";
-import {
-  getCategoryBadgeVariant,
-  getCategoryDisplayName,
-} from "@/utils/category-utils";
+import { getCategoryBadgeVariant } from "@/utils/category-utils";
 import { formatCurrency, formatDate } from "@/utils/formatter";
 import { cn } from "@/utils/ui-utils";
 import { Badge } from "../shadcn/badge";
@@ -14,7 +11,7 @@ interface ExpenseCardViewProps {
   expenses: Expense[];
   selectedExpenses: string[];
   topCategory: string;
-  onSelectExpense: (expenseId: string, checked: boolean) => void;
+  onSelectExpense: (expenseId: string) => void;
 }
 
 export function ExpenseCardView({
@@ -39,10 +36,7 @@ export function ExpenseCardView({
                 "bg-gradient-accent border-l-4 border-primary-500"
             )}
             onClick={() => {
-              onSelectExpense(
-                expense.id,
-                !selectedExpenses.includes(expense.id)
-              );
+              onSelectExpense(expense.id);
             }}
           >
             <CardHeader className="pb-3 flex flex-row justify-between items-center gap-2">
@@ -54,8 +48,13 @@ export function ExpenseCardView({
                 <Label htmlFor={expense.id}>{expense.itemName}</Label>
               </div>
 
-              <Badge className={getCategoryBadgeVariant(expense.category)}>
-                {getCategoryDisplayName(expense.category)}
+              <Badge
+                className={cn(
+                  "capitalize",
+                  getCategoryBadgeVariant(expense.category)
+                )}
+              >
+                {expense.category}
               </Badge>
             </CardHeader>
             <CardContent>

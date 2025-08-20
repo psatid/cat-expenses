@@ -12,7 +12,3 @@ export function getCategoryBadgeVariant(category: ExpenseCategory) {
       return "bg-gray-100 text-gray-800 border-gray-200";
   }
 }
-
-export function getCategoryDisplayName(category: ExpenseCategory) {
-  return category.charAt(0).toUpperCase() + category.slice(1);
-}

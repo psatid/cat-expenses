@@ -1,3 +1,7 @@
+import type { Expense } from "@/types/expense";
+import { getCategoryBadgeVariant } from "@/utils/category-utils";
+import { formatCurrency, formatDate } from "@/utils/formatter";
+import { cn } from "@/utils/ui-utils";
 import { Badge } from "../shadcn/badge";
 import { Checkbox } from "../shadcn/checkbox";
 import {
@@ -8,20 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from "../shadcn/table";
-import { cn } from "@/utils/ui-utils";
-import type { Expense } from "@/types/expense";
-import { formatCurrency, formatDate } from "@/utils/formatter";
-import {
-  getCategoryBadgeVariant,
-  getCategoryDisplayName,
-} from "@/utils/category-utils";
 
 interface ExpenseTableViewProps {
   expenses: Expense[];
   selectedExpenses: string[];
   topCategory: string;
   onSelectAll: (checked: boolean) => void;
-  onSelectExpense: (expenseId: string, checked: boolean) => void;
+  onSelectExpense: (expenseId: string) => void;
 }
 
 export function ExpenseTableView({
@@ -67,26 +64,26 @@ export function ExpenseTableView({
                     "bg-primary-50 border-l-4 border-l-primary-500"
                 )}
                 onClick={() => {
-                  onSelectExpense(
-                    expense.id,
-                    !selectedExpenses.includes(expense.id)
-                  );
+                  onSelectExpense(expense.id);
                 }}
               >
                 <TableCell>
                   <Checkbox
                     checked={selectedExpenses.includes(expense.id)}
-                    onCheckedChange={(checked) =>
-                      onSelectExpense(expense.id, checked as boolean)
-                    }
+                    onCheckedChange={() => onSelectExpense(expense.id)}
                   />
                 </TableCell>
                 <TableCell className="font-medium">
                   {expense.itemName}
                 </TableCell>
                 <TableCell>
-                  <Badge className={getCategoryBadgeVariant(expense.category)}>
-                    {getCategoryDisplayName(expense.category)}
+                  <Badge
+                    className={cn(
+                      "capitalize",
+                      getCategoryBadgeVariant(expense.category)
+                    )}
+                  >
+                    {expense.category}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right font-semibold">

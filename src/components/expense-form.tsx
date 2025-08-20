@@ -45,10 +45,13 @@ export function ExpenseForm() {
     }
   }, [catFactError]);
 
-  const onSubmit = async (data: ExpenseFormData) => {
-    await addExpense.mutateAsync(data);
-    form.reset();
-    setOpen(false);
+  const onSubmit = (data: ExpenseFormData) => {
+    addExpense.mutate(data, {
+      onSuccess: () => {
+        form.reset();
+        setOpen(false);
+      },
+    });
   };
 
   return (

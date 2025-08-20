@@ -23,18 +23,20 @@ export function ExpenseList() {
     }
   };
 
-  const handleSelectExpense = (expenseId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedExpenses((prev) => [...prev, expenseId]);
-    } else {
+  const handleSelectExpense = (expenseId: string) => {
+    if (selectedExpenses.includes(expenseId)) {
       setSelectedExpenses((prev) => prev.filter((id) => id !== expenseId));
+    } else {
+      setSelectedExpenses((prev) => [...prev, expenseId]);
     }
   };
 
-  const handleDeleteSelected = async () => {
-    if (selectedExpenses.length === 0) return;
-    await deleteExpenses.mutateAsync(selectedExpenses);
-    setSelectedExpenses([]);
+  const handleDeleteOnClick = async () => {
+    deleteExpenses.mutate(selectedExpenses, {
+      onSuccess: () => {
+        setSelectedExpenses([]);
+      },
+    });
   };
 
   if (isLoading) {
@@ -51,7 +53,7 @@ export function ExpenseList() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Cat Expenses</h2>
         <Button
-          onClick={handleDeleteSelected}
+          onClick={handleDeleteOnClick}
           disabled={deleteExpenses.isPending || selectedExpenses.length === 0}
           variant="destructive"
         >
@@ -90,7 +92,9 @@ export function ExpenseList() {
           {topCategory && (
             <div className="text-sm text-primary-700 font-medium text-right">
               🏆 Top Category:{" "}
-              <span className="font-bold capitalize">{topCategory}</span>
+              <span className="font-bold capitalize" data-testid="top-category">
+                {topCategory}
+              </span>
             </div>
           )}
         </div>

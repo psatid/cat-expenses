@@ -23,7 +23,7 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
-        "src/common/components/shad-cn/**", // exclude components from component library
+        "src/components/shadcn/**", // exclude shadcn components from coverage
         "src/main.tsx",
         "src/vite-env.d.ts",
         "src/**/index.{ts,tsx}",
