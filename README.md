@@ -17,6 +17,8 @@ A beautiful and functional web application for tracking cat-related expenses wit
 - **Modern Design**: Beautiful gradient backgrounds and smooth animations
 - **Theme-based Styling**: All gradients and colors use CSS custom properties for easy theming
 - **Responsive Layout**: Works perfectly on desktop and mobile devices
+  - **Desktop**: Clean table view with all details
+  - **Mobile**: Card-based layout optimized for touch interaction
 - **Category Badges**: Color-coded category indicators (Food, Furniture, Accessory)
 - **Real-time Updates**: Instant UI updates when adding or deleting expenses
 - **Loading States**: Smooth loading indicators for better user experience
@@ -106,9 +108,17 @@ All expense data is automatically saved to your browser's local storage, so your
 src/
 ├── components/
 │   ├── expense-page.tsx      # Main page component
-│   ├── expense-table.tsx     # Expense table with selection
+│   ├── expense-table.tsx     # Expense table wrapper
 │   ├── expense-form.tsx      # Add expense dialog
+│   ├── expense-list/         # Expense list components
+│   │   ├── expense-list.tsx      # Main list component
+│   │   ├── expense-table-view.tsx # Desktop table view
+│   │   ├── expense-card-view.tsx  # Mobile card view
+│   │   └── index.ts              # Exports
+│   ├── form-fields/         # Reusable form field components
 │   └── shadcn/              # UI components
+├── constants/
+│   └── expense-constants.ts # Application constants
 ├── hooks/
 │   └── use-expenses.ts      # React Query hooks
 ├── services/

@@ -1,39 +1,18 @@
+import { EXPENSE_CATEGORIES } from "@/constants/expense-constants";
+import { useAddExpense, useRandomCatFact } from "@/hooks/use-expenses";
+import { expenseSchema, type ExpenseFormData } from "@/types/expense";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { InputFormField, SelectFormField } from "./form-fields";
 import { Button } from "./shadcn/button";
-import { Input } from "./shadcn/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "./shadcn/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./shadcn/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./shadcn/select";
-import { useAddExpense, useRandomCatFact } from "../hooks/use-expenses";
-
-const expenseSchema = z.object({
-  itemName: z.string().min(1, "Item name is required"),
-  category: z.enum(["Food", "Furniture", "Accessory"] as const),
-  amount: z.number().min(0.01, "Amount must be greater than 0"),
-});
-
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+import { Form } from "./shadcn/form";
 
 interface ExpenseFormProps {
   open: boolean;
@@ -49,7 +28,7 @@ export function ExpenseForm({ open, onOpenChange }: ExpenseFormProps) {
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       itemName: "",
-      category: "Food",
+      category: "food",
       amount: 0,
     },
   });
@@ -95,67 +74,27 @@ export function ExpenseForm({ open, onOpenChange }: ExpenseFormProps) {
           {/* Expense Form */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
+              <InputFormField
+                form={form}
                 name="itemName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Item Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Premium Cat Food" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Item Name"
+                placeholder="e.g., Premium Cat Food"
               />
 
-              <FormField
-                control={form.control}
+              <SelectFormField
+                form={form}
                 name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Food">Food</SelectItem>
-                        <SelectItem value="Furniture">Furniture</SelectItem>
-                        <SelectItem value="Accessory">Accessory</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Category"
+                placeholder="Select a category"
+                options={EXPENSE_CATEGORIES}
               />
 
-              <FormField
-                control={form.control}
+              <InputFormField
+                form={form}
                 name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Amount ($)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0.00"
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value) || 0)
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Amount (THB)"
+                type="number"
+                placeholder="0"
               />
 
               <div className="flex gap-3 pt-4">

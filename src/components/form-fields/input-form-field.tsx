@@ -1,6 +1,6 @@
 import React from "react";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
-import { cn } from "../../utils";
+import { cn } from "../../utils/ui-utils";
 import {
   FormControl,
   FormField,
