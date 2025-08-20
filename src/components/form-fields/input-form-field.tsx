@@ -49,6 +49,21 @@ export const InputFormField = <T extends FieldValues>({
                 className={cn(leftIcon && "pl-10", className)}
                 {...field}
                 {...inputProps}
+                onChange={(e) => {
+                  if (inputProps.type === "number") {
+                    field.onChange(e.target.valueAsNumber);
+                  } else {
+                    field.onChange(e);
+                  }
+                  inputProps.onChange?.(e);
+                }}
+                value={
+                  inputProps.type === "number"
+                    ? !field.value
+                      ? ""
+                      : field.value
+                    : field.value
+                }
               />
             </FormControl>
             {rightIcon && (

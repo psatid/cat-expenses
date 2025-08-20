@@ -18,7 +18,9 @@ export interface CatFact {
 export const expenseSchema = z.object({
   itemName: z.string().min(1, "Item name is required"),
   category: z.enum(["food", "furniture", "accessory"] as const),
-  amount: z.number().min(0.01, "Amount must be greater than 0"),
+  amount: z
+    .number({ message: "Amount is required" })
+    .min(0.01, "Amount is required"),
 });
 
 export type ExpenseFormData = z.infer<typeof expenseSchema>;

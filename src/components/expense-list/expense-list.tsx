@@ -85,21 +85,19 @@ export function ExpenseList() {
 
       {/* Summary */}
       {expenses.length > 0 && (
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              Total:{" "}
-              {formatCurrency(
-                expenses.reduce((sum, expense) => sum + expense.amount, 0)
-              )}
-            </div>
-            {topCategories.length > 0 && (
-              <div className="text-sm text-primary-700 font-medium">
-                🏆 Top Category:{" "}
-                <span className="font-bold">{topCategories.join(", ")}</span>
-              </div>
+        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+          <div className="text-sm text-gray-600">
+            Total:{" "}
+            {formatCurrency(
+              expenses.reduce((sum, expense) => sum + expense.amount, 0)
             )}
           </div>
+          {topCategories.length > 0 && (
+            <div className="text-sm text-primary-700 font-medium text-right">
+              🏆 Top Category:{" "}
+              <span className="font-bold">{topCategories.join(", ")}</span>
+            </div>
+          )}
         </div>
       )}
     </div>

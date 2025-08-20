@@ -70,8 +70,7 @@
   --gradient-background: linear-gradient(
     to bottom right,
     var(--primary-50),
-    var(--primary-100),
-    var(--warning-50)
+    var(--primary-100)
   );
   --gradient-accent: linear-gradient(
     to right,

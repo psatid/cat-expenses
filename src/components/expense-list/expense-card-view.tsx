@@ -1,8 +1,14 @@
-import { Checkbox } from "../shadcn/checkbox";
-import { Card, CardHeader, CardTitle } from "../shadcn/card";
-import { cn } from "@/utils/ui-utils";
 import type { Expense } from "@/types/expense";
+import {
+  getCategoryBadgeVariant,
+  getCategoryDisplayName,
+} from "@/utils/category-utils";
 import { formatCurrency, formatDate } from "@/utils/formatter";
+import { cn } from "@/utils/ui-utils";
+import { Badge } from "../shadcn/badge";
+import { Card, CardContent, CardHeader } from "../shadcn/card";
+import { Checkbox } from "../shadcn/checkbox";
+import { Label } from "../shadcn/label";
 
 interface ExpenseCardViewProps {
   expenses: Expense[];
@@ -32,50 +38,38 @@ export function ExpenseCardView({
             className={cn(
               "transition-all duration-200",
               isTopCategory(expense.category) &&
-                "bg-gradient-accent border-l-4 border-primary-500",
-              selectedExpenses.includes(expense.id) && "ring-2 ring-primary-500"
+                "bg-gradient-accent border-l-4 border-primary-500"
             )}
+            onClick={() => {
+              onSelectExpense(
+                expense.id,
+                !selectedExpenses.includes(expense.id)
+              );
+            }}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    checked={selectedExpenses.includes(expense.id)}
-                    onCheckedChange={(checked) =>
-                      onSelectExpense(expense.id, checked as boolean)
-                    }
-                  />
-                  <div>
-                    <CardTitle className="text-lg font-semibold">
-                      {expense.itemName}
-                    </CardTitle>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                          expense.category === "food" &&
-                            "bg-green-100 text-green-800",
-                          expense.category === "furniture" &&
-                            "bg-blue-100 text-blue-800",
-                          expense.category === "accessory" &&
-                            "bg-purple-100 text-purple-800"
-                        )}
-                      >
-                        {expense.category}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(expense.createdAt)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-primary-600">
-                    {formatCurrency(expense.amount)}
-                  </div>
-                </div>
+            <CardHeader className="pb-3 flex flex-row justify-between items-center gap-2">
+              <div className="flex flex-row items-center gap-2 flex-1 truncate m-0">
+                <Checkbox
+                  id={expense.id}
+                  checked={selectedExpenses.includes(expense.id)}
+                />
+                <Label htmlFor={expense.id}>{expense.itemName}</Label>
               </div>
+
+              <Badge className={getCategoryBadgeVariant(expense.category)}>
+                {getCategoryDisplayName(expense.category)}
+              </Badge>
             </CardHeader>
+            <CardContent>
+              <div className="flex flex-row items-center justify-between">
+                <div className="text-md font-bold text-primary-600">
+                  {formatCurrency(expense.amount)}
+                </div>
+                <span className="text-xs text-gray-500">
+                  {formatDate(expense.createdAt)}
+                </span>
+              </div>
+            </CardContent>
           </Card>
         ))
       )}

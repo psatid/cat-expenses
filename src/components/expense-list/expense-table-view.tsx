@@ -1,3 +1,4 @@
+import { Badge } from "../shadcn/badge";
 import { Checkbox } from "../shadcn/checkbox";
 import {
   Table,
@@ -10,6 +11,10 @@ import {
 import { cn } from "@/utils/ui-utils";
 import type { Expense } from "@/types/expense";
 import { formatCurrency, formatDate } from "@/utils/formatter";
+import {
+  getCategoryBadgeVariant,
+  getCategoryDisplayName,
+} from "@/utils/category-utils";
 
 interface ExpenseTableViewProps {
   expenses: Expense[];
@@ -61,8 +66,14 @@ export function ExpenseTableView({
                 key={expense.id}
                 className={cn(
                   isTopCategory(expense.category) &&
-                    "bg-gradient-accent border-l-4 border-primary-500"
+                    "bg-primary-50 border-l-4 border-l-primary-500"
                 )}
+                onClick={() => {
+                  onSelectExpense(
+                    expense.id,
+                    !selectedExpenses.includes(expense.id)
+                  );
+                }}
               >
                 <TableCell>
                   <Checkbox
@@ -76,19 +87,9 @@ export function ExpenseTableView({
                   {expense.itemName}
                 </TableCell>
                 <TableCell>
-                  <span
-                    className={cn(
-                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                      expense.category === "food" &&
-                        "bg-green-100 text-green-800",
-                      expense.category === "furniture" &&
-                        "bg-blue-100 text-blue-800",
-                      expense.category === "accessory" &&
-                        "bg-purple-100 text-purple-800"
-                    )}
-                  >
-                    {expense.category}
-                  </span>
+                  <Badge className={getCategoryBadgeVariant(expense.category)}>
+                    {getCategoryDisplayName(expense.category)}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right font-semibold">
                   {formatCurrency(expense.amount)}
