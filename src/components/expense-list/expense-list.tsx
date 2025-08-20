@@ -12,7 +12,7 @@ import { formatCurrency } from "@/utils/formatter";
 export function ExpenseList() {
   const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
   const { data: expenses = [], isLoading } = useExpenses();
-  const { data: topCategories = [] } = useTopCategories();
+  const { data: topCategory = "" } = useTopCategories();
   const deleteExpenses = useDeleteExpenses();
 
   const handleSelectAll = (checked: boolean) => {
@@ -70,7 +70,7 @@ export function ExpenseList() {
       <ExpenseTableView
         expenses={expenses}
         selectedExpenses={selectedExpenses}
-        topCategories={topCategories}
+        topCategory={topCategory}
         onSelectAll={handleSelectAll}
         onSelectExpense={handleSelectExpense}
       />
@@ -79,7 +79,7 @@ export function ExpenseList() {
       <ExpenseCardView
         expenses={expenses}
         selectedExpenses={selectedExpenses}
-        topCategories={topCategories}
+        topCategory={topCategory}
         onSelectExpense={handleSelectExpense}
       />
 
@@ -92,10 +92,9 @@ export function ExpenseList() {
               expenses.reduce((sum, expense) => sum + expense.amount, 0)
             )}
           </div>
-          {topCategories.length > 0 && (
+          {topCategory && (
             <div className="text-sm text-primary-700 font-medium text-right">
-              🏆 Top Category:{" "}
-              <span className="font-bold">{topCategories.join(", ")}</span>
+              🏆 Top Category: <span className="font-bold">{topCategory}</span>
             </div>
           )}
         </div>

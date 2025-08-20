@@ -19,7 +19,7 @@ A beautiful and functional web application for tracking cat-related expenses wit
 - **Responsive Layout**: Works perfectly on desktop and mobile devices
   - **Desktop**: Clean table view with all details
   - **Mobile**: Card-based layout optimized for touch interaction
-- **Category Badges**: Color-coded category indicators (Food, Furniture, Accessory)
+- **Category Badges**: Color-coded category indicators using shadcn Badge component (Food, Furniture, Accessory)
 - **Real-time Updates**: Instant UI updates when adding or deleting expenses
 - **Loading States**: Smooth loading indicators for better user experience
 

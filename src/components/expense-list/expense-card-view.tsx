@@ -13,18 +13,16 @@ import { Label } from "../shadcn/label";
 interface ExpenseCardViewProps {
   expenses: Expense[];
   selectedExpenses: string[];
-  topCategories: string[];
+  topCategory: string;
   onSelectExpense: (expenseId: string, checked: boolean) => void;
 }
 
 export function ExpenseCardView({
   expenses,
   selectedExpenses,
-  topCategories,
+  topCategory,
   onSelectExpense,
 }: ExpenseCardViewProps) {
-  const isTopCategory = (category: string) => topCategories.includes(category);
-
   return (
     <div className="md:hidden space-y-4">
       {expenses.length === 0 ? (
@@ -37,7 +35,7 @@ export function ExpenseCardView({
             key={expense.id}
             className={cn(
               "transition-all duration-200",
-              isTopCategory(expense.category) &&
+              expense.category === topCategory &&
                 "bg-gradient-accent border-l-4 border-primary-500"
             )}
             onClick={() => {

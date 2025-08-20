@@ -19,7 +19,7 @@ import {
 interface ExpenseTableViewProps {
   expenses: Expense[];
   selectedExpenses: string[];
-  topCategories: string[];
+  topCategory: string;
   onSelectAll: (checked: boolean) => void;
   onSelectExpense: (expenseId: string, checked: boolean) => void;
 }
@@ -27,12 +27,10 @@ interface ExpenseTableViewProps {
 export function ExpenseTableView({
   expenses,
   selectedExpenses,
-  topCategories,
+  topCategory,
   onSelectAll,
   onSelectExpense,
 }: ExpenseTableViewProps) {
-  const isTopCategory = (category: string) => topCategories.includes(category);
-
   return (
     <div className="hidden md:block border rounded-lg overflow-hidden">
       <Table>
@@ -65,7 +63,7 @@ export function ExpenseTableView({
               <TableRow
                 key={expense.id}
                 className={cn(
-                  isTopCategory(expense.category) &&
+                  expense.category === topCategory &&
                     "bg-primary-50 border-l-4 border-l-primary-500"
                 )}
                 onClick={() => {

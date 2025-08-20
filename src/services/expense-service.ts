@@ -55,12 +55,15 @@ export class ExpenseService {
     }, {} as Record<string, number>);
   }
 
-  static getTopCategories(): string[] {
+  static getTopCategories(): string {
     const categoryTotals = this.getExpensesByCategory();
     const maxAmount = Math.max(...Object.values(categoryTotals));
 
-    return Object.entries(categoryTotals)
+    const topCategories = Object.entries(categoryTotals)
       .filter(([, amount]) => amount === maxAmount)
       .map(([category]) => category);
+
+    // Return the first category if multiple have the same amount, or empty string if no expenses
+    return topCategories.length > 0 ? topCategories[0] : "";
   }
 }
