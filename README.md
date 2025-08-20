@@ -12,24 +12,39 @@ A beautiful and functional web application for tracking cat-related expenses wit
 - **Random Cat Facts**: Get a random cat fact every time you open the expense form
 - **Local Storage**: All data is persisted in browser local storage
 
-### 🎨 UI/UX Features
-
-- **Modern Design**: Beautiful gradient backgrounds and smooth animations
-- **Theme-based Styling**: All gradients and colors use CSS custom properties for easy theming
-- **Responsive Layout**: Works perfectly on desktop and mobile devices
-  - **Desktop**: Clean table view with all details
-  - **Mobile**: Card-based layout optimized for touch interaction
-- **Category Badges**: Color-coded category indicators using shadcn Badge component (Food, Furniture, Accessory)
-- **Real-time Updates**: Instant UI updates when adding or deleting expenses
-- **Loading States**: Smooth loading indicators for better user experience
-
 ### 🏗️ Architecture
 
-The application follows a clean, layered architecture:
+The application has the following layered architecture:
 
-- **Service Layer**: Handles data persistence with local storage
-- **React Query Layer**: Manages state and data fetching with hooks
-- **UI Layer**: Beautiful, responsive components built with shadcn/ui
+```mermaid
+graph TB
+    subgraph "Frontend"
+        A[React Components] --> B[React Query Hooks]
+        B --> C[Services]
+    end
+
+    subgraph "Data Sources"
+        C --> D[Local Storage]
+        C --> E[Cat Facts API]
+    end
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fce4ec
+    style E fill:#f1f8e9
+```
+
+**High-Level Overview:**
+
+- **React Components**: UI layer built with shadcn/ui components
+- **React Query**: State management and data fetching
+- **Services**: Business logic for expenses and external API integration
+- **Data Sources**: Local storage for persistence and external API for cat facts
+
+## Documentation
+
+For detailed UML sequence diagrams showing the data flow for fetching, adding, and deleting expenses, see [docs/uml-diagrams.md](./docs/uml-diagrams.md).
 
 ## Technology Stack
 
@@ -50,6 +65,8 @@ The application follows a clean, layered architecture:
 
 ### Installation
 
+#### Option 1: Quick Setup (Recommended)
+
 1. Clone the repository:
 
 ```bash
@@ -57,21 +74,92 @@ git clone <repository-url>
 cd cat-expense
 ```
 
-2. Install dependencies:
+2. Run the automated setup:
+
+```bash
+make setup
+```
+
+This will automatically:
+
+- Install the correct Node.js version (using nvm)
+- Install/upgrade pnpm to the required version
+- Install all project dependencies
+
+3. Start the development server:
+
+```bash
+make dev
+```
+
+4. Open your browser and navigate to `http://localhost:3000`
+
+#### Option 2: Manual Setup
+
+1. Install nvm (Node Version Manager):
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+```
+
+Then restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or source ~/.zshrc for zsh
+```
+
+2. Install Node.js and enable corepack:
+
+```bash
+nvm install
+nvm use
+npm install -g corepack
+```
+
+3. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd cat-expense
+```
+
+4. Enable corepack and install pnpm:
+
+```bash
+corepack enable
+corepack prepare pnpm@10.9.0 --activate
+```
+
+5. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-3. Start the development server:
+6. Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+7. Open your browser and navigate to `http://localhost:3000`
 
 ### Available Scripts
+
+#### Using Makefile (Recommended)
+
+- `make setup` - Complete development environment setup
+- `make dev` - Start development server
+- `make build` - Build for production
+- `make preview` - Preview production build
+- `make test` - Run tests
+- `make test-ui` - Run tests with UI
+- `make test-coverage` - Run tests with coverage
+- `make lint` - Run ESLint
+- `make clean` - Clean build artifacts
+- `make help` - Show all available commands
+
+#### Using pnpm directly
 
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
