@@ -1,12 +1,8 @@
 import { ExpenseForm } from "@/components/expense-form";
 import { ExpenseList } from "@/components/expense-list";
-import { Button } from "@/components/shadcn/button";
-import { Cat, Plus } from "lucide-react";
-import { useState } from "react";
+import { Cat } from "lucide-react";
 
 export function ExpensePage() {
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
   return (
     <div>
       {/* Header */}
@@ -24,15 +20,8 @@ export function ExpensePage() {
 
       {/* Main Content */}
       <div className="space-y-6">
-        {/* Action Button */}
         <div className="flex justify-center">
-          <Button
-            onClick={() => setIsFormOpen(true)}
-            className="bg-gradient-primary hover:bg-gradient-primary-hover text-white px-8 py-3 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Plus className="mr-2 h-5 w-5" />
-            Add Expense
-          </Button>
+          <ExpenseForm />
         </div>
 
         {/* Expense Table */}
@@ -40,9 +29,6 @@ export function ExpensePage() {
           <ExpenseList />
         </div>
       </div>
-
-      {/* Expense Form Dialog */}
-      <ExpenseForm open={isFormOpen} onOpenChange={setIsFormOpen} />
     </div>
   );
 }

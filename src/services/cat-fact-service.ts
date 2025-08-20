@@ -1,9 +1,11 @@
 import type { CatFact } from "../types/expense";
 
+const CAT_FACT_API_URL = "https://catfact.ninja/fact";
+
 export class CatFactService {
   static async getRandomCatFact(): Promise<CatFact> {
     try {
-      const response = await fetch("https://catfact.ninja/fact");
+      const response = await fetch(CAT_FACT_API_URL);
       if (!response.ok) {
         throw new Error("Failed to fetch cat fact");
       }

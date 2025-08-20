@@ -2,8 +2,9 @@ import { EXPENSE_CATEGORIES } from "@/constants/expense-constants";
 import { useAddExpense, useRandomCatFact } from "@/hooks/use-expenses";
 import { expenseSchema, type ExpenseFormData } from "@/types/expense";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { InputFormField, SelectFormField } from "./form-fields";
 import { Button } from "./shadcn/button";
 import {
@@ -11,18 +12,20 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "./shadcn/dialog";
 import { Form } from "./shadcn/form";
+import { Plus } from "lucide-react";
 
-interface ExpenseFormProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function ExpenseForm({ open, onOpenChange }: ExpenseFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function ExpenseForm() {
+  const [open, setOpen] = useState(false);
   const addExpense = useAddExpense();
-  const { data: catFact, isLoading: isLoadingCatFact } = useRandomCatFact();
+  const {
+    data: catFact,
+    isFetching: isLoadingCatFact,
+    refetch: refetchCatFact,
+    error: catFactError,
+  } = useRandomCatFact();
 
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
@@ -33,21 +36,38 @@ export function ExpenseForm({ open, onOpenChange }: ExpenseFormProps) {
     },
   });
 
-  const onSubmit = async (data: ExpenseFormData) => {
-    setIsSubmitting(true);
-    try {
-      await addExpense.mutateAsync(data);
-      form.reset();
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error adding expense:", error);
-    } finally {
-      setIsSubmitting(false);
+  // Handle cat fact error
+  useEffect(() => {
+    if (catFactError) {
+      toast.error("Failed to load cat fact", {
+        description: "Don't worry, you can still add your expense!",
+      });
     }
+  }, [catFactError]);
+
+  const onSubmit = async (data: ExpenseFormData) => {
+    await addExpense.mutateAsync(data);
+    form.reset();
+    setOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        if (open) {
+          refetchCatFact();
+        }
+        setOpen(open);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button className="bg-gradient-primary hover:bg-gradient-primary-hover text-white px-8 py-3 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-200">
+          <Plus className="mr-2 h-5 w-5" />
+          Add Expense
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -101,17 +121,17 @@ export function ExpenseForm({ open, onOpenChange }: ExpenseFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => onOpenChange(false)}
+                  onClick={() => setOpen(false)}
                   className="flex-1"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={addExpense.isPending}
                   className="flex-1 bg-gradient-primary hover:bg-gradient-primary-hover"
                 >
-                  {isSubmitting ? "Adding..." : "Add Expense"}
+                  {addExpense.isPending ? "Adding..." : "Add Expense"}
                 </Button>
               </div>
             </form>

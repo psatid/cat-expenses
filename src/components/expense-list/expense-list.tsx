@@ -33,13 +33,8 @@ export function ExpenseList() {
 
   const handleDeleteSelected = async () => {
     if (selectedExpenses.length === 0) return;
-
-    try {
-      await deleteExpenses.mutateAsync(selectedExpenses);
-      setSelectedExpenses([]);
-    } catch (error) {
-      console.error("Error deleting expenses:", error);
-    }
+    await deleteExpenses.mutateAsync(selectedExpenses);
+    setSelectedExpenses([]);
   };
 
   if (isLoading) {
@@ -94,7 +89,8 @@ export function ExpenseList() {
           </div>
           {topCategory && (
             <div className="text-sm text-primary-700 font-medium text-right">
-              🏆 Top Category: <span className="font-bold">{topCategory}</span>
+              🏆 Top Category:{" "}
+              <span className="font-bold capitalize">{topCategory}</span>
             </div>
           )}
         </div>
