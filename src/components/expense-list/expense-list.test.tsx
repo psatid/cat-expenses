@@ -166,7 +166,7 @@ describe("ExpenseList", () => {
           name: /Delete Selected/,
         });
         expect(deleteButton.textContent).toMatch(/Delete Selected \(\d+\)/);
-        expect(deleteButton.textContent).not.toBe("Delete Selected (0)");
+        expect(deleteButton.textContent).toBe("Delete Selected (1)");
       });
 
       // Unselect the expense
@@ -230,7 +230,7 @@ describe("ExpenseList", () => {
         const deleteButton = screen.getByRole("button", {
           name: /Delete Selected/,
         });
-        expect(deleteButton.textContent).not.toBe("Delete Selected (0)");
+        expect(deleteButton.textContent).toBe("Delete Selected (1)");
       });
 
       // Click delete button
@@ -286,7 +286,7 @@ describe("ExpenseList", () => {
         const deleteButton = screen.getByRole("button", {
           name: /Delete Selected/,
         });
-        expect(deleteButton.textContent).not.toBe("Delete Selected (0)");
+        expect(deleteButton.textContent).toBe("Delete Selected (1)");
       });
 
       // Click delete button
@@ -325,7 +325,7 @@ describe("ExpenseList", () => {
         const deleteButton = screen.getByRole("button", {
           name: /Delete Selected/,
         });
-        expect(deleteButton.textContent).not.toBe("Delete Selected (0)");
+        expect(deleteButton.textContent).toBe("Delete Selected (1)");
       });
 
       // Click delete button
