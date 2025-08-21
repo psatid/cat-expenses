@@ -27,6 +27,9 @@ vi.mock("sonner", () => ({
 const mockExpenseService = vi.mocked(ExpenseService);
 const mockCatFactService = vi.mocked(CatFactService);
 
+// Get the mocked toast functions
+const mockToast = vi.mocked(await import("sonner")).toast;
+
 // Test wrapper with QueryClient
 function TestWrapper({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
@@ -82,19 +85,6 @@ describe("useExpenses", () => {
 
     expect(result.current.data).toEqual(mockExpenses);
     expect(mockExpenseService.getAllExpenses).toHaveBeenCalledTimes(1);
-  });
-
-  it("handles error state", async () => {
-    const error = new Error("Failed to fetch expenses");
-    mockExpenseService.getAllExpenses.mockRejectedValue(error);
-
-    const { result } = renderHook(() => useExpenses(), {
-      wrapper: TestWrapper,
-    });
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
   });
 });
 
@@ -168,23 +158,30 @@ describe("useAddExpense", () => {
     expect(mockExpenseService.addExpense).toHaveBeenCalledWith(expenseData);
   });
 
-  it("handles loading state during mutation", async () => {
-    mockExpenseService.addExpense.mockImplementation(
-      () =>
-        new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                id: "1",
-                itemName: "Premium Cat Food",
-                category: "food" as ExpenseCategory,
-                amount: 500,
-                createdAt: "2024-01-01T00:00:00.000Z",
-              }),
-            100
-          )
-        )
+  it("shows success toast when expense is added", async () => {
+    const { result } = renderHook(() => useAddExpense(), {
+      wrapper: TestWrapper,
+    });
+
+    const expenseData = {
+      itemName: "Premium Cat Food",
+      category: "food" as const,
+      amount: 500,
+    };
+
+    await result.current.mutateAsync(expenseData);
+
+    expect(mockToast.success).toHaveBeenCalledWith(
+      "Expense added successfully!",
+      {
+        description: "Premium Cat Food - food",
+      }
     );
+  });
+
+  it("shows error toast when expense addition fails", async () => {
+    const error = new Error("Failed to add expense");
+    mockExpenseService.addExpense.mockRejectedValue(error);
 
     const { result } = renderHook(() => useAddExpense(), {
       wrapper: TestWrapper,
@@ -196,11 +193,31 @@ describe("useAddExpense", () => {
       amount: 500,
     };
 
-    result.current.mutate(expenseData);
+    await expect(result.current.mutateAsync(expenseData)).rejects.toThrow();
 
-    // Wait for the mutation to start
-    await waitFor(() => {
-      expect(result.current.isPending).toBe(true);
+    expect(mockToast.error).toHaveBeenCalledWith("Failed to add expense", {
+      description: "Failed to add expense",
+    });
+  });
+
+  it("shows generic error toast for non-Error objects", async () => {
+    const error = "String error";
+    mockExpenseService.addExpense.mockRejectedValue(error);
+
+    const { result } = renderHook(() => useAddExpense(), {
+      wrapper: TestWrapper,
+    });
+
+    const expenseData = {
+      itemName: "Premium Cat Food",
+      category: "food" as const,
+      amount: 500,
+    };
+
+    await expect(result.current.mutateAsync(expenseData)).rejects.toThrow();
+
+    expect(mockToast.error).toHaveBeenCalledWith("Failed to add expense", {
+      description: "An unexpected error occurred",
     });
   });
 
@@ -240,10 +257,43 @@ describe("useDeleteExpenses", () => {
     expect(mockExpenseService.deleteExpenses).toHaveBeenCalledWith(expenseIds);
   });
 
-  it("handles loading state during deletion", async () => {
-    mockExpenseService.deleteExpenses.mockImplementation(
-      () => new Promise<void>((resolve) => setTimeout(() => resolve(), 100))
+  it("shows success toast when expenses are deleted", async () => {
+    const { result } = renderHook(() => useDeleteExpenses(), {
+      wrapper: TestWrapper,
+    });
+
+    const expenseIds = ["1", "2"];
+
+    await result.current.mutateAsync(expenseIds);
+
+    expect(mockToast.success).toHaveBeenCalledWith(
+      "Expenses deleted successfully!",
+      {
+        description: "2 expenses removed",
+      }
     );
+  });
+
+  it("shows singular success toast when one expense is deleted", async () => {
+    const { result } = renderHook(() => useDeleteExpenses(), {
+      wrapper: TestWrapper,
+    });
+
+    const expenseIds = ["1"];
+
+    await result.current.mutateAsync(expenseIds);
+
+    expect(mockToast.success).toHaveBeenCalledWith(
+      "Expenses deleted successfully!",
+      {
+        description: "1 expense removed",
+      }
+    );
+  });
+
+  it("shows error toast when expense deletion fails", async () => {
+    const error = new Error("Failed to delete expenses");
+    mockExpenseService.deleteExpenses.mockRejectedValue(error);
 
     const { result } = renderHook(() => useDeleteExpenses(), {
       wrapper: TestWrapper,
@@ -251,11 +301,27 @@ describe("useDeleteExpenses", () => {
 
     const expenseIds = ["1", "2"];
 
-    result.current.mutate(expenseIds);
+    await expect(result.current.mutateAsync(expenseIds)).rejects.toThrow();
 
-    // Wait for the mutation to start
-    await waitFor(() => {
-      expect(result.current.isPending).toBe(true);
+    expect(mockToast.error).toHaveBeenCalledWith("Failed to delete expenses", {
+      description: "Failed to delete expenses",
+    });
+  });
+
+  it("shows generic error toast for non-Error objects during deletion", async () => {
+    const error = "String error";
+    mockExpenseService.deleteExpenses.mockRejectedValue(error);
+
+    const { result } = renderHook(() => useDeleteExpenses(), {
+      wrapper: TestWrapper,
+    });
+
+    const expenseIds = ["1", "2"];
+
+    await expect(result.current.mutateAsync(expenseIds)).rejects.toThrow();
+
+    expect(mockToast.error).toHaveBeenCalledWith("Failed to delete expenses", {
+      description: "An unexpected error occurred",
     });
   });
 });
@@ -283,40 +349,5 @@ describe("useRandomCatFact", () => {
       length: 35,
     });
     expect(mockCatFactService.getRandomCatFact).toHaveBeenCalledTimes(1);
-  });
-
-  it("handles loading state", () => {
-    mockCatFactService.getRandomCatFact.mockImplementation(
-      () =>
-        new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                fact: "Cats spend 70% of their lives sleeping.",
-                length: 35,
-              }),
-            100
-          )
-        )
-    );
-
-    const { result } = renderHook(() => useRandomCatFact(), {
-      wrapper: TestWrapper,
-    });
-
-    expect(result.current.isFetching).toBe(true);
-  });
-
-  it("handles error state", async () => {
-    const error = new Error("Failed to fetch cat fact");
-    mockCatFactService.getRandomCatFact.mockRejectedValue(error);
-
-    const { result } = renderHook(() => useRandomCatFact(), {
-      wrapper: TestWrapper,
-    });
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
   });
 });

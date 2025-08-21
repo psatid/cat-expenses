@@ -61,8 +61,7 @@ export function ExpenseTableView({
                 key={expense.id}
                 className={cn(
                   "cursor-pointer hover:bg-gray-100",
-                  expense.category === topCategory &&
-                    "bg-primary-50 border-l-4 border-l-primary-500"
+                  expense.category === topCategory && "bg-primary-50"
                 )}
                 onClick={() => {
                   onSelectExpense(expense.id);
