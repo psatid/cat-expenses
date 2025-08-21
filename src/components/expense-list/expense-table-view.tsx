@@ -60,6 +60,7 @@ export function ExpenseTableView({
               <TableRow
                 key={expense.id}
                 className={cn(
+                  "cursor-pointer hover:bg-gray-100",
                   expense.category === topCategory &&
                     "bg-primary-50 border-l-4 border-l-primary-500"
                 )}
@@ -68,10 +69,7 @@ export function ExpenseTableView({
                 }}
               >
                 <TableCell>
-                  <Checkbox
-                    checked={selectedExpenses.includes(expense.id)}
-                    onCheckedChange={() => onSelectExpense(expense.id)}
-                  />
+                  <Checkbox checked={selectedExpenses.includes(expense.id)} />
                 </TableCell>
                 <TableCell className="font-medium">
                   {expense.itemName}
